@@ -40,7 +40,7 @@ export default function VerifyPage({
         const { data, error: queryError } = await supabase
           .from('certificates')
           .select('id, fullname, training_name, training_date_text, date_awarded_text, control_number_full, created_at')
-          .match({ qr_code_id: qrCodeId, verification_token: token })
+          .match({ qr_code_id: qrCodeId, qr_verification_token: token })
           .single();
 
         if (queryError || !data) {
@@ -110,95 +110,128 @@ export default function VerifyPage({
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl p-8 max-w-2xl w-full">
-        {/* Success Header */}
-        <div className="flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mx-auto mb-6">
-          <svg
-            className="w-8 h-8 text-green-600"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path
-              fillRule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </div>
-
-        <h1 className="text-3xl font-bold text-slate-900 text-center mb-2">
-          Certificate Verified
-        </h1>
-        <p className="text-slate-600 text-center mb-8">
-          This certificate is authentic and valid
-        </p>
-
-        {/* Certificate Details */}
-        <div className="space-y-6 border-t border-slate-200 pt-6">
-          <div>
-            <label className="text-sm font-semibold text-slate-600 uppercase">
-              Recipient Name
-            </label>
-            <p className="text-xl font-bold text-slate-900 mt-1">
-              {certificate.fullname}
-            </p>
-          </div>
-
-          <div>
-            <label className="text-sm font-semibold text-slate-600 uppercase">
-              Training Program
-            </label>
-            <p className="text-lg text-slate-900 mt-1">
-              {certificate.training_name}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-sm font-semibold text-slate-600 uppercase">
-                Training Period
-              </label>
-              <p className="text-slate-900 mt-1">{certificate.training_date_text}</p>
+    <main className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-50 to-slate-100">
+      <div className="w-full max-w-3xl">
+        {/* CERTIFIED Badge */}
+        <div className="flex justify-center mb-8">
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full blur-lg opacity-30" />
+            <div className="relative bg-white border-4 border-green-500 rounded-full w-24 h-24 flex items-center justify-center shadow-2xl">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-600">✓</div>
+                <div className="text-xs font-bold text-green-600 uppercase tracking-wider">Certified</div>
+              </div>
             </div>
-            <div>
-              <label className="text-sm font-semibold text-slate-600 uppercase">
-                Date Awarded
-              </label>
-              <p className="text-slate-900 mt-1">{certificate.date_awarded_text}</p>
-            </div>
-          </div>
-
-          <div>
-            <label className="text-sm font-semibold text-slate-600 uppercase">
-              Control Number
-            </label>
-            <p className="text-slate-900 font-mono mt-1">
-              {certificate.control_number_full}
-            </p>
-          </div>
-
-          <div>
-            <label className="text-sm font-semibold text-slate-600 uppercase">
-              Issue Date
-            </label>
-            <p className="text-slate-900 mt-1">
-              {new Date(certificate.created_at).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
-            </p>
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="mt-8 pt-6 border-t border-slate-200">
-          <p className="text-xs text-slate-500 text-center">
-            This certificate has been verified and is legitimate.
-            <br />
-            Certificate ID: {certificate.id}
-          </p>
+        {/* Main Certificate Card */}
+        <div className="bg-white rounded-xl shadow-2xl overflow-hidden">
+          {/* Decorative Top Bar */}
+          <div className="h-1 bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500" />
+
+          <div className="p-8 md:p-12">
+            {/* Header */}
+            <div className="text-center mb-10 pb-8 border-b-2 border-slate-100">
+              <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-2">
+                Certificate Verified
+              </h1>
+              <p className="text-lg text-green-600 font-semibold">
+                ✓ Authentic and Valid
+              </p>
+            </div>
+
+            {/* Certificate Details */}
+            <div className="space-y-8">
+              {/* Recipient Name - Prominent */}
+              <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-6 border border-green-200">
+                <label className="text-xs font-bold text-slate-600 uppercase tracking-wider block mb-2">
+                  Awarded To
+                </label>
+                <p className="text-3xl font-bold text-slate-900">
+                  {certificate.fullname}
+                </p>
+              </div>
+
+              {/* Training Program */}
+              <div>
+                <label className="text-xs font-bold text-slate-600 uppercase tracking-wider block mb-2">
+                  Training Program
+                </label>
+                <p className="text-xl font-semibold text-slate-900">
+                  {certificate.training_name}
+                </p>
+              </div>
+
+              {/* Key Details Grid */}
+              <div className="grid grid-cols-2 gap-6 md:grid-cols-3">
+                <div>
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-2">
+                    Training Period
+                  </label>
+                  <p className="text-sm md:text-base font-semibold text-slate-900">
+                    {certificate.training_date_text}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-2">
+                    Date Awarded
+                  </label>
+                  <p className="text-sm md:text-base font-semibold text-slate-900">
+                    {certificate.date_awarded_text}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-2">
+                    Issued Date
+                  </label>
+                  <p className="text-sm md:text-base font-semibold text-slate-900">
+                    {new Date(certificate.created_at).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                    })}
+                  </p>
+                </div>
+              </div>
+
+              {/* Control Number - For verification */}
+              <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+                <label className="text-xs font-bold text-slate-600 uppercase tracking-wider block mb-2">
+                  Control Number
+                </label>
+                <p className="text-sm md:text-base font-mono font-bold text-slate-900 break-all">
+                  {certificate.control_number_full}
+                </p>
+              </div>
+            </div>
+
+            {/* Footer with Verification Message */}
+            <div className="mt-12 pt-8 border-t-2 border-slate-100">
+              <div className="bg-green-50 rounded-lg p-6 border-l-4 border-green-500">
+                <p className="text-sm text-green-900 font-semibold text-center">
+                  ✓ This certificate has been verified and is legitimate
+                </p>
+                <p className="text-xs text-slate-600 text-center mt-3">
+                  Certificate ID: <span className="font-mono font-bold">{certificate.id}</span>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Decorative Bottom Bar */}
+          <div className="h-1 bg-gradient-to-r from-teal-500 via-emerald-500 to-green-500" />
+        </div>
+
+        {/* Timestamp */}
+        <div className="text-center mt-6 text-xs text-slate-500">
+          Verified on {new Date().toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          })}
         </div>
       </div>
     </main>
