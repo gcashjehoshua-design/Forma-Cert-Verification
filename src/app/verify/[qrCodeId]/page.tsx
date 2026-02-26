@@ -6,10 +6,11 @@ import { supabase } from '@/lib/supabase';
 type Certificate = {
   id: string;
   fullname: string;
-  training_name: string;
-  training_date_text: string;
-  date_awarded_text: string;
-  control_number_full: string;
+  training: string;
+  training_start_date?: string;
+  training_end_date?: string;
+  award_date?: string;
+  control_number?: string;
   created_at: string;
 };
 
@@ -39,7 +40,7 @@ export default function VerifyPage({
         // Query the certificates table for this QR code ID and token
         const { data, error: queryError } = await supabase
           .from('certificates')
-          .select('id, fullname, training_name, training_date_text, date_awarded_text, control_number_full, created_at')
+          .select('id, fullname, training, training_start_date, training_end_date, award_date, control_number, created_at')
           .match({ qr_code_id: qrCodeId, qr_verification_token: token })
           .single();
 
@@ -159,7 +160,7 @@ export default function VerifyPage({
                   Training Program
                 </label>
                 <p className="text-xl font-semibold text-slate-900">
-                  {certificate.training_name}
+                  {certificate.training}
                 </p>
               </div>
 
@@ -170,7 +171,9 @@ export default function VerifyPage({
                     Training Period
                   </label>
                   <p className="text-sm md:text-base font-semibold text-slate-900">
-                    {certificate.training_date_text}
+                    {certificate.training_start_date && certificate.training_end_date
+                      ? `${certificate.training_start_date} to ${certificate.training_end_date}`
+                      : 'N/A'}
                   </p>
                 </div>
                 <div>
@@ -178,7 +181,7 @@ export default function VerifyPage({
                     Date Awarded
                   </label>
                   <p className="text-sm md:text-base font-semibold text-slate-900">
-                    {certificate.date_awarded_text}
+                    {certificate.award_date || 'N/A'}
                   </p>
                 </div>
                 <div>
@@ -196,14 +199,17 @@ export default function VerifyPage({
               </div>
 
               {/* Control Number - For verification */}
-              <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
-                <label className="text-xs font-bold text-slate-600 uppercase tracking-wider block mb-2">
-                  Control Number
-                </label>
-                <p className="text-sm md:text-base font-mono font-bold text-slate-900 break-all">
-                  {certificate.control_number_full}
-                </p>
-              </div>
+              {certificate.control_number && (
+                <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+                  <label className="text-xs font-bold text-slate-600 uppercase tracking-wider block mb-2">
+                    Control Number
+                  </label>
+                  <p className="text-sm md:text-base font-mono font-bold text-slate-900 break-all">
+                    {certificate.control_number}
+                  </p>
+                </div>
+              )}
+            </div>
             </div>
 
             {/* Footer with Verification Message */}
