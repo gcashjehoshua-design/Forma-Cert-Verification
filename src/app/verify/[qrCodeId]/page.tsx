@@ -210,7 +210,6 @@ export default function VerifyPage({
                 </div>
               )}
             </div>
-            </div>
 
             {/* Footer with Verification Message */}
             <div className="mt-12 pt-8 border-t-2 border-slate-100">
